@@ -1,4 +1,4 @@
 /node_modules
-/awscredentials.js
-/.gitignore
-/.env
+/awscredentials.json
+.gitignore
+.env
