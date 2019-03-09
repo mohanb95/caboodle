@@ -1,0 +1,70 @@
+<% include ../partials/header.ejs %>
+<% include ../partials/navbar.ejs %>
+<link href="/stylesheets/admin_home.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
+<script src= "/js/admin_home.js" type="text/javascript"></script>
+<% include ./sidenav.ejs %>
+<style>
+    .space{
+        margin-left:10px;
+    }
+</style>
+<div class="row">
+    
+    <div class="col s12 m10 offset-m1" style="margin-top:-70px;padding:0">
+        <h4 class="center" style="margin-top:30px;"><%= company.cName %> Registrations</h4>
+        <form action="/placementHead/updateInternshipStats/<%= company._id %>" method="post">
+            <input type="text" style="display:none" name="noOfStudents" value=<%= company.registeredStudents.length %>>
+    <table class="striped centered " >
+        <thead>
+            <tr>
+                <th style="width: 5% ">Sl No.</th>
+                <th style="width: 15% ">USN</th>
+                <th style="width: 25% ">Name</th>
+                <th style="width: 25% " >Email</th>
+                <th >Placed? <button class="btn waves-effect waves-light green" type="submit" name="action">
+                                Update
+                            </button>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% 
+                var has = function(container, value) {
+                	var returnValue = false;
+                	var pos = container.indexOf(value);
+                	if (pos >= 0) {
+                		returnValue = true;
+                	}
+                	return returnValue;
+                }
+            %>
+            <% company.registeredStudents.forEach(function(student,i){ %>
+                <tr>
+                    <td><%= i + 1 %></td>
+                    <td><%= student.USN %></td>
+                    <td><%= student.author.firstName %> <%= student.author.lastName %></td> 
+                    <td><%= student.author.email %></td>
+                    <td>
+                        <% if(has(company.selectedStudents,student._id)){ %>
+                            <input name="placed<%= i  %>" value="<%= student._id %>" type="radio" id="yes<%= i %>" checked/>
+                            <label for="yes<%= i %>">Yes</label><span class"space"></span>
+                            <input name="placed<%= i %>" value="no" type="radio" id="no<%= i %>" />
+                            <label for="no<%= i %>">No</label><span class="space"></span>
+                        <% }else{ %>
+                            <input name="placed<%= i  %>" value="<%= student._iy %>" type="radio" id="yes<%= i %>" />
+                            <label for="yes<%= i %>">Yes</label><span class"space"></span>
+                            <input name="placed<%= i %>" value="no" type="radio" id="no<%= i %>" checked/>
+                            <label for="no<%= i %>">No</label><span class="space"></span>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    </form>
+    </div>
+    </div>
+    </div>
+    
+<% include ../partials/footer.ejs %>

@@ -1,0 +1,335 @@
+<% include ../partials/header.ejs %>
+<% include ../partials/navbar.ejs %>
+<link href="/stylesheets/admin_home.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
+<!--<script src= "/js/admin_home.js" type="text/javascript"></script>-->
+<% include ./sidenav.ejs %>
+<style>
+  body{
+    background:#e5ebea;
+  }
+  h5{
+    font-size:1.4rem;
+    margin:25px 0px;
+  }
+  h5 i{
+    border:2px solid;
+    padding:3px;
+  }
+  
+  .charts{
+		float: left;
+		margin: 5px 30px;
+	}
+	
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box; }
+@media (min-width: 250px) {
+  .container {
+    width: 85%;
+    padding: 0; }
+}
+
+/* For devices larger than 550px */
+@media (min-width: 550px) {
+  .container {
+    width: 80%; }
+}
+@media (min-width: 993px) {
+  #lg1{
+	  margin-left:40px !important;
+	}
+}
+
+</style>
+    <div class="row ">
+    	<div id="lg1" class=" col  s12 l2 m4 hvr-float-shadow card-placement" onclick="window.location='/placementHead/addNewPlacement'">
+    				<h5>
+    				  <i class="material-icons">add</i>
+    				  Add Placement
+    				</h5>
+    	</div>	
+    	<div class="col  s12 m4 l2 hvr-float-shadow card-placement" onclick="window.location='placementHead/viewStats'">
+        <h5 >
+				  <i class="fa fa-bar-chart" aria-hidden="true"></i>
+				  Test Analysis
+				</h5>
+    	</div>	
+    	<div class="col  s12 m4 l2 hvr-float-shadow card-placement" onclick="window.location='/placementHead/students'">
+  				<h5>
+  				  <i class="fa fa-graduation-cap fa-5" aria-hidden="true"></i>
+  				  List Students
+  				</h5>
+    	</div>	
+    	<div class="col  s12 m4 l2 hvr-float-shadow card-placement" onclick="window.location='/placementHead/placements'">
+				<h5 >
+				  <i class="material-icons">work</i>
+				  Drives
+				</h5>
+    </div>
+    </div>
+    <div class='row' style="margin-top:50px">
+      
+      <!--<div class="container">-->
+        <div class="charts  col s12 m3 offset-l1">
+      		<canvas id="lineCanvas" width="300px" height="350px"></canvas>
+      	</div>
+      	<div class="charts col s12 m3 offset-m1">
+      		<canvas id="BarCanvas" width="240px" height="300px"></canvas>
+      	</div>
+      	<div class="charts col s12 m3">
+      		<canvas id="radarCanvas" width="230px" height="400px"></canvas>
+      	</div>
+      <!--</div>-->
+    </div>
+    <div class='row'>
+    	  <div class="col s12 m12">
+    	    <h3 class="text-center">Recently added Company</h3>
+	        <div id="RecentPlacement"></div>
+    	</div>
+  </div>
+    
+    
+    
+    
+    
+    <script>
+      $.ajax({
+        method: "GET",
+        url: "/listOfdrives/home",
+        // data: Score,
+        success: function(company){
+            for(i in company){
+              var str = '<div class="col s12 m6">'
+                        +'        <div class="card  cst_color  z-depth-3">'
+                        +'            <div class="card-content white-text">'
+                        +'                <span class="card-title">'
+                        +'                    <i class="fa fa-building" aria-hidden="true" style="font-size: .7em"></i>'
+                        +'                    '+company[i].cName
+                        +'                </span>'
+                        +'                <span class="date">'
+                        +'                    <i class="fa fa-calendar-o" aria-hidden="true" style="font-size: .7em"></i>'
+                        +'                    '
+                        +'                    <span>'
+                        +'                        '+ company[i].date +'</span>'
+                        +'                </span>'
+                        +'                <p class="divider"></p>'
+                        +'                <div class="details">'
+                        +'                    <p>'
+                        +'                        <i class="fa fa-money" aria-hidden="true"></i> '
+                        +'                        Package  : '+ company[i].Package 
+                        +'                    </p>'
+                        +'                    <p>'
+                        +'                        <i class="fa fa-map-marker" aria-hidden="true" style="margin-right: 7px;"></i> '
+                        +'                        Location  : '+ company[i].jobLocation 
+                        +'                    </p>'
+                        +'                    <p>'
+                        +'                        <i class="fa fa-compass" aria-hidden="true"></i> '
+                        +'                        Drive-location : '+ company[i].driveLocation 
+                        +'                    </p>'
+                        +'                    <p>'
+                        +'                        <i class="fa fa-cogs" aria-hidden="true"></i>'
+                        +'                        Skills : '+ company[i].skills 
+                        +'                    </p>'
+                        +'                    <p>'
+                        +'                        <i class="fa fa-wrench" aria-hidden="true"></i>'
+                        +'                        Dept :  '+ company[i].department
+                        +'                    </p>'
+                        +'                </div>'
+                        +'            </div>'
+                        +'            <div class="card-action">'
+                        +'                <a href="/placementHead/registeredStudents/'+ company[i]._id +'" >View Registrations</a>'
+                        +'            </div>'
+                        +'        </div>'
+                        +'    </div>';
+                        
+                        $('#RecentPlacement').append(str);
+            }
+        }
+      });
+      
+      
+      
+    </script>
+    <script>
+
+    var has = function(container, value) {
+                	var returnValue = false;
+                	var pos = container.indexOf(value);
+                	if (pos >= 0) {
+                		returnValue = true;
+                	}
+                	return returnValue;
+                };
+    $.ajax({
+        method: "GET",
+        url: "/placementHead/placementStats",
+        // data: Score,
+        success: function(data){
+            
+            lineGraph(data['1']);
+            BarGraph(data['2']);
+            
+            Radar(data['3']);
+            
+        }
+    });
+    
+    
+    
+    
+    
+    
+    function lineGraph(data){
+        var dataset= [];
+            var companies=[];
+            for(i in data){
+                dataset.push({
+                    label: ""+i,
+                    backgroundColor: 'rgba('+Math.floor(Math.random() * 253)+', 99, 132, 0.0)',
+                    borderColor: 'rgba('+Math.floor(Math.random() * 253)+','+Math.floor(Math.random() * 253)+', '+Math.floor(Math.random() * 253)+',0.6)',
+                    data: data[''+i],
+                });    
+
+                for(j=0;j<data[''+i].length;j++){
+                    if(!has(companies,data[''+i][j].Cname))
+                        companies.push(data[''+i][j].Cname);
+                }
+                
+            }
+          var lineVar = document.getElementById('lineCanvas').getContext('2d');
+        	var lineData={
+        		labels: companies,
+                datasets: dataset
+        	};
+        	var options ={
+                                scaleShowGridLines: false,
+                                showScale: false,
+                                responsive: false,
+            					maintainAspectRatio: false,
+                                barShowStroke: false,
+                                scales: {
+        						        yAxes: [{
+        						            ticks: {
+        						                beginAtZero: true
+        						            }
+        						        }],
+        						        xAxes: [{
+        						            ticks: {
+        						                beginAtZero: true
+        						            }
+        						        }]
+        						    }
+                            };
+        
+        	var myLineChart = new Chart(lineVar, {
+            type: 'line',
+            data: lineData,
+            options: options
+        });
+            
+    }
+    
+    function BarGraph(data){
+      
+        var BarVar = document.getElementById('BarCanvas').getContext('2d');
+        console.log(BarVar);
+	        var BarChart = new Chart(BarVar, {
+        	  type: 'bar',
+        	  data: {
+        	    datasets: [{
+        	          label: 'Bar Dataset',
+        	          data: [data.placedCount,data.UnplacedCount],
+        	          backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                    ]
+        	        }],
+        	    labels: ['Placed', 'Un-Placed']
+        	  },
+        	  options: {
+        	    responsive:false,
+        	    
+        	  	xAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }],
+        	  	yAxes: [{
+                        // stacked: true,
+                        display: true,
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }],
+                legend: {
+                    display: true,
+                    labels: {
+                        fontColor: 'rgb(255, 99, 132)'
+                    }
+                }
+        	  }
+        	});
+    }
+    function Radar(data){
+        console.log(data);
+        var placedStdDept=[],unplaced=[],department=[];
+            for(i in data.count ){
+                if(data.placed)
+                placedStdDept.push(data.placed[i]);
+                if(data.count)
+                unplaced.push(data.count[i]);
+                    department.push(''+i);
+                
+                    
+            }
+            console.log(department);
+            var RadarVar = document.getElementById('radarCanvas').getContext('2d');
+        	var myRadarChart = new Chart(RadarVar, {
+        	    type: 'radar',
+        	    data: {
+        	    datasets: [{
+                        label: 'Placed Department wise',
+        	          	data: placedStdDept,
+                        backgroundColor: 'rgba(255, 99, 132,.2)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        pointBackgroundColor: 'rgb(255, 99, 132)',
+                        
+                        
+                    },
+                    {
+                        label: "Unplaced Student",
+                        data: unplaced,
+                        backgroundColor: 'rgba(54, 162, 235,.2)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        pointBackgroundColor: 'rgb(54, 162, 235)'
+                    },
+                    {
+                        label: "",
+                        data: [0],
+                        backgroundColor: 'rgba(54, 162, 235,0)',
+                        borderColor: 'rgba(54, 162, 235,0)',
+                        pointBackgroundColor: 'rgba(54, 162, 235,0)'
+                    }
+                    ],
+        	    labels: department
+        	  	},
+        	    options: {
+        	          responsive:false,
+                    scaleOverlay : false,
+                    scaleOverride : true,
+                    scaleSteps : 5,
+                    scaleStepWidth : 2,
+                    scaleStartValue : 0
+        	    }
+        	});
+    }
+        
+</script>
+    
+<% include ../partials/footer.ejs %>

@@ -1,0 +1,266 @@
+<% include ../partials/header.ejs %>
+<% include ../partials/navbar.ejs %>
+<% include ./sidenav.ejs %>
+<link href="/stylesheets/avatars.css" rel="stylesheet">    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.3.0/image-picker.min.css" />
+    <div class="row ">
+        <div class="col l12 z-depth-5" style="margin-top:-50px">
+            <div class="card z-depth-2">
+                <div class="background">
+                    <a class="modal-trigger" href="#modal1"><img class="user" src="<%= student.author.dp %>"></a>
+                </div>
+                <div class="card-content col s12 m12">
+                    <div style="left:10%">
+                        <a class="waves-effect waves-light btn blue" 
+                        href="<%= student.resumeLink%>" target="_blank">
+                            <i class="material-icons left">file_download</i>RESUME</a>
+                    </div>
+                    <% var semTotal=0,noOfSems=0;
+                        student.semResults.forEach(function(sem){ 
+                            if(sem.Percentage!=null){
+                                noOfSems = noOfSems + 1;
+                            }
+                            semTotal = semTotal + sem.Percentage;
+                        })
+                    %>
+                    <div style="padding-top: 30px">
+                        <h5 class="blue-text">PERSONAL INFORMATION</h5>
+                        <table>
+                            <tr >
+                                <td class="border_bottom" width="45%">Name: 
+                                &nbsp;&nbsp;&nbsp;&nbsp; <%= student.author.firstName %>&nbsp;<%= student.author.lastName %></td>
+                                <td class="space"></td>
+                                <td class="border_bottom">USN: 
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;<%= student.USN %></td> 
+                            </tr>
+                            <tr >
+                                <td class="border_bottom" width="45%">Gender: 
+                                &nbsp;&nbsp;&nbsp;<%= student.author.gender %></td>
+                                <td class="space"></td>
+                                <td class="border_bottom">Department: 
+                                &nbsp;&nbsp;&nbsp;<%= student.department %></td> 
+                            </tr>
+                            <tr >
+                                <td class="border_bottom" width="45%">DOB: 
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= student.DOB %></td>
+                                <td class="space"></td>
+                                <td class="border_bottom">Semester: &nbsp;&nbsp;&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;<%= student.semester %></td> 
+                            </tr>
+                            <tr >
+                                <td class="border_bottom" width="45%">Phone: 
+                                &nbsp;&nbsp;&nbsp;&nbsp;+91 <%= student.mobile1 %></td>
+                                <td class="space"></td>
+                                <% var semAggregate = semTotal/noOfSems;
+                                    if(isNaN(semAggregate)||semAggregate==0){ %>
+                                        <td class="border_bottom">Aggregate: &nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;Not Updated</td> 
+                                    <% } else{ %>
+                                        <td class="border_bottom">Aggregate: &nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;<%= semAggregate %>%</td> 
+                                    <% } %>
+                            </tr>
+                            <tr >
+                                <td class="border_bottom" width="45%">Email: 
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= student.author.email %></td>
+                                <td class="space"></td>
+                                <% if(student.selectedPlacements){  %>
+                                    <td class="border_bottom">No of Placements: &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <%= student.selectedPlacements.length %></td> 
+                                <% } else{ %>
+                                    <td class="border_bottom">No of Placements: &nbsp;&nbsp;&nbsp;&nbsp;0</td> 
+                                <% } %>
+                            </tr>
+                            <tr >
+                                <td class="border_bottom" width="45%">Address: 
+                                &nbsp;<%= student.address %></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="padding-top:30px;">
+                        <table>
+                            <tr>
+                                <td class="border_bottom" width="48%">
+                                    <h5 class="blue-text">10TH RESULT DETAILS</h5>
+                                    <div class="card horizontal">
+                                        <%if(student.tenthResult.reportLink){%>
+                                        <div class="card-image hide-on-small-only">
+                                            <% if(/.pdf/i.test(student.tenthResult.reportLink)){ %>
+                                            <embed  class="activator" name="plugin" src="<%= student.tenthResult.reportLink%>" type="application/pdf" width="100%" height="207">
+                                            <% } else { %>
+                                            <img class="responsive-img"src="<%= student.tenthResult.reportLink%>">
+                                            <% } %>
+                                        </div>
+                                        <% } %>
+                                        <div class="card-stacked">
+                                            <div class="card-content">
+                                                <p>Board: <%= student.tenthResult.board %></p>
+                                                <p>Result: <%= student.tenthResult.Percentage %> %</p>
+                                                <p>Year of Passing: <%= student.tenthResult.yearPassed %></p>
+                                            </div>
+                                            <%if(student.tenthResult.reportLink){%>
+                                            <div class="card-action">
+                                                <%  var filename = student.tenthResult.reportLink.split("/");
+                                                    filename = filename[filename.length - 1] %>
+                                                <a target="_blank"
+                                                    href="/student/viewFile?link=<%=student.USN%>/<%=filename%>">
+                                                    Open</a>
+                                                <a href="<%= student.tenthResult.reportLink%>">Download</a>
+                                            </div>
+                                            <% }%>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td width="4%"></td>
+                                <td class="border_bottom">
+                                    <h5 class="blue-text">12TH RESULT DETAILS</h5>
+                                    <div class="card horizontal">
+                                        <%if(student.twelfthResult.reportLink){ %>
+                                        <div class="card-image hide-on-small-only">
+                                            <% if(/.pdf/i.test(student.twelfthResult.reportLink) ){ %>
+                                                <embed  class="activator" name="plugin" src="<%= student.twelfthResult.reportLink%>" type="application/pdf" width="100%" height="207">
+                                            <% } else { %>
+                                                <img class="responsive-img"src="<%= student.twelfthResult.reportLink%>">
+                                            <% } %>
+                                        </div>
+                                        <% }%>
+                                        <div class="card-stacked">
+                                            <div class="card-content">
+                                                <p>Board: <%= student.twelfthResult.board %></p>
+                                                <p>Result: <%= student.twelfthResult.Percentage %> %</p>
+                                                <p>Year of Passing: <%= student.twelfthResult.yearPassed %></p>
+                                            </div>
+                                            <%if(student.twelfthResult.reportLink){ %>
+                                            <div class="card-action">
+                                                <%  var filename = student.twelfthResult.reportLink.split("/");
+                                                    filename = filename[filename.length - 1] %>
+                                                <a target="_blank" 
+                                                    href="/student/viewFile?link=<%=student.USN%>/<%=filename%>">
+                                                    Open</a>
+                                                <a href="<%= student.twelfthResult.reportLink%>" download>Download</a>
+                                            </div>
+                                            <% }%>
+                                        </div>
+                                    </div>
+                                </td> 
+                            </tr>
+                        </table>
+                    </div>
+                    <style>
+                        .ste{
+                            margin-right:8px !important;
+                        }
+                    </style>
+                    <div style="padding-top:30px; float:left;border-bottom:1px solid #eeeeee;">
+                        <h5 class="blue-text">SEMESTER RESULTS</h5>
+                        <% student.semResults.forEach(function(item,index){ %> 
+                        <% if(index==4 || index == 0){%>
+                             <div class='col m12'>
+                                 <% }%>
+                            <div class="card col s6 m3" style="padding:10px; border: 0.5px solid grey">
+                                <div class="card-image">
+                                    <% if(/.pdf/i.test(item.reportLink)){  %>
+                                        <embed  class="activator" name="plugin" src="<%= item.reportLink%>" type="application/pdf" width="100%" height="300px">
+                                    <% } else if(/.jpg|.png|gif|.jpeg/i.test(item.reportLink)) {%>
+                                        <img class="responsive-img"src="<%= item.reportLink%>" style="min-height:305px;">
+                                    <% }else{ %>
+                                    <div style="padding:150px"></div>
+                                    <% }%>
+                                    
+                                </div>
+                                <div class="card-action" style="padding: 5px 5px 5px 5px">
+                                    <span class="card-title text-center" style="color:black;">Sem: <%= item.sem%> <br> Result: <%= item.Percentage %>%</span>
+                                    <% var filename = item.reportLink.split("/");
+                                                    filename = filename[filename.length - 1] %>
+                                    <a href="/student/viewFile?link=<%=student.USN%>/<%=filename%>" target="_blank">
+                                        <i class="material-icons">remove_red_eye</i></a>
+                                    <a href="<%= item.reportLink%>" download style="margin-right:0" class="right blue-text">
+                                        <i class="material-icons">file_download</i></a>
+                                </div>
+                            </div>
+                            <% if(index==3){%>
+                                 </div>
+                             <% }%>
+                        <% }); %>
+                        </div>
+                        
+                        
+                    </div>
+                    <div style="padding-top:30px; float:left;">
+                        <h5 class="blue-text">CERTIFICATIONS</h5>
+                        <% student.certifications.forEach(function(item,index){ %>
+                            <div class="card col s12 m5" style="margin:10px">
+                                <div class="card-image">
+                                    <% if(/.pdf/i.test(item.docLink)){ %>
+                                        <embed  class="activator" name="plugin" src="<%= item.docLink%>" type="application/pdf" width="100%" height="300px">
+                                    <% } else {%>
+                                        <img class="responsive-img" src="<%= item.docLink%>">
+                                    <% } %>
+                                    
+                                </div>
+                                <div class="card-action" style="padding: 5px 5px 5px 5px">
+                                    <span class="card-title text-center" style="color:black;"><%= item.description%></span>
+                                    <% var filename = item.docLink.split("/");
+                                                    filename = filename[filename.length - 1] %>
+                                    <a class="left" href="/student/viewFile?link=<%=student.USN%>/<%=filename%>" target="_blank">
+                                        <i class="material-icons">remove_red_eye</i>
+                                    </a>
+                                    <a class='right' href="<%= item.docLink%>" download style="margin-right:0"><i class="material-icons">file_download</i></a>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal1" class="modal">
+        <p class="close">
+        <a href="#!" class="modal-action modal-close blue-text"><i class="small material-icons">close</i></a>
+        </p>
+    <div class="modal-content">
+        <form action="/student/updateDP" method="POST" id="profilePic">
+        <select id="selectImage" name="dp" class="image-picker show-labels show-html">
+          <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male1.png" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male1.png</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female1.png" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female1.png</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male2.png" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male2.png</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female2.jpg" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female2.jpg</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male3.png" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male3.png</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female3.jpg" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female3.jpg</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male4.jpg" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male4.jpg</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female4.jpg" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female4.jpg</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male5.jpg" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/male5.jpg</option>
+            <option data-img-src="https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female5.jpg" >https://gradbunker.s3.ap-south-1.amazonaws.com/publicImages/female5.jpg</option>
+        </select>
+        <button class="btn waves-effect waves-light right" style="width:100%" type="submit" name="action">Update
+            <i class="material-icons">done</i>
+          </button>
+        </form>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/image-picker/0.3.0/image-picker.min.js"></script>
+  <script>
+       $(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal({
+        opacity: 0.9,
+        startingTop: '30%'
+    });
+    $("#selectImage").imagepicker({
+        hide_select: true
+    });
+
+    var $container = $('.image_picker_selector');
+    // initialize
+    // $container.imagesLoaded(function () {
+    //     $container.masonry({
+    //         columnWidth: 30,
+    //         itemSelector: '.thumbnail'
+    //     });
+    // });
+  });
+  $('a[href=""]').remove();
+  </script>
+<% include ../partials/footer.ejs %>

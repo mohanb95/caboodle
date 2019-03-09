@@ -1,0 +1,41 @@
+<% include ../partials/header.ejs %>
+<% include ../partials/navbar.ejs %>
+<link href="/stylesheets/admin_home.css" rel="stylesheet">
+<% include ./slide_nav.ejs %>
+	<title>Get Links</title>
+	<div class="row col m8 offset-m4">
+    <h4>Upload images to get links</h4>
+    <form enctype="multipart/form-data" action="/admin/upload" method="post" id="uploadForm">
+        <div>
+            <input type="file" name="image" />
+            <p>
+                <input type="submit" class="seven coloums" 
+                    value="Click here to upload image and get link" name="submit">
+                <p><span id = "status"></span></p>
+            </p>
+        </div>
+    </form>
+    </div>
+<script>
+$(document).ready(function() {
+
+ $('#uploadForm').submit(function() {
+     $("#status").empty().text("File is uploading...");
+
+    $(this).ajaxSubmit({
+
+        error: function(xhr) {
+                status('Error: ' + xhr.status);
+        },
+
+        success: function(data) {
+        	var obj = JSON.parse(data);
+    		var url = obj.link;
+            $("#status").text(url);
+        }
+   });
+
+  return false;
+  });   
+</script>
+<% include ../partials/footer.ejs %>
