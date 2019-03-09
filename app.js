@@ -35,6 +35,14 @@ var indexRoutes      = require("./routes/index"),
     leaderRoutes    = require("./routes/leaderBoard"),
     mobileRoutes    = require("./routes/mobile"),
     ResultsRoutes   = require("./routes/resultAnalysis");
+require('aws_config');
+
+// sample aws config
+// aws.config.update({
+//     secretAccessKey: 'fveJNJHGHkjasdp+/XGalsdjC55Cl7CM8x4',
+//     accessKeyId: 'AKIAJ454JHDKSGEK3THCZQ',
+//     region: 'ap-south-1'
+// });
 
 // =======================================
 // db connectins and body parsing
@@ -70,11 +78,7 @@ app.use(session({
     )        
 }));
 
-aws.config.update({
-    secretAccessKey: 'fveJNKJOK5FHnst1Pcp+/XGNRHB0AC55Cl7CM8x4',
-    accessKeyId: 'AKIAJV56NPSGEK3THCZQ',
-    region: 'ap-south-1'
-});
+
 
 app.use(flash());
 app.use(passport.initialize());
