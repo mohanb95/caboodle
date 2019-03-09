@@ -35,12 +35,11 @@ var indexRoutes      = require("./routes/index"),
     leaderRoutes    = require("./routes/leaderBoard"),
     mobileRoutes    = require("./routes/mobile"),
     ResultsRoutes   = require("./routes/resultAnalysis");
-require('aws_config');
 
 // sample aws config
 // aws.config.update({
-//     secretAccessKey: 'fveJNJHGHkjasdp+/XGalsdjC55Cl7CM8x4',
-//     accessKeyId: 'AKIAJ454JHDKSGEK3THCZQ',
+//     secretAccessKey: 'abcJNJHGHkjasdp+/XGalsdjC55Cl7CM8x4',
+//     accessKeyId: 'ABCDJ454JHDKSGEK3THCZQ',
 //     region: 'ap-south-1'
 // });
 
